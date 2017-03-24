@@ -57,23 +57,27 @@ except:
 def get_user_tweets(user):
 	twenty_tweets = api.user_timeline(user)
 
+	for tweet in twenty_tweets:
+		print(tweet)
+		print ("ONE")
 	if twenty_tweets not in CACHE_DICTION.values():
 		CACHE_DICTION[user] = twenty_tweets
 		f = open(CACHE_FNAME, 'w')
 		f.write(json.dumps(CACHE_DICTION))
 		f.close()
+	if twenty_tweets in CACHE_DICTION.values():
+		return twenty_tweets
 
 	return twenty_tweets
 	#this will update the cache diction every time you run it if the tweets have updated themselves 
 
-get_user_tweets("UMichFootball")
+# get_user_tweets("UMichFootball")
 
 # Your function must cache data it retrieves and rely on a cache file!
 # Note that this is a lot like work you have done already in class (but, depending upon what you did previously, may not be 
 # EXACTLY the same, so be careful your code does exactly what you want here).
 
 # Write code to create/build a connection to a database: tweets.db,
-conn = sqlite3.connect('tweets.db')
 
 # And then load all of those tweets you got from Twitter into a database table called Tweets, with the following columns in each row:
 
@@ -88,17 +92,20 @@ conn = sqlite3.connect('tweets.db')
 # Below we have provided interim outline suggestions for what to do, sequentially, in comments.
 
 # Make a connection to a new database tweets.db, and create a variable to hold the database cursor.
-
+conn = sqlite3.connect('tweets.db')
+cur = conn.cursor()
 
 # Write code to drop the Tweets table if it exists, and create the table (so you can run the program over and over), 
 #with the correct (4) column names and appropriate types for each.
+cur.execute('DROP TABLE IF EXISTS Tweets')
+
+new_table = 'CREATE TABLE IF NOT EXISTS Tweets (id INTEGER primary key, tweet_id INTEGER, authour TEXT, time_posted TIMESTAMP, tweet_text TEXT, retweets INTEGER)'
 
 # HINT: Remember that the time_posted column should be the TIMESTAMP data type!
 
-
 # Invoke the function you defined above to get a list that represents a bunch of tweets from the UMSI timeline. Save those 
 # tweets in a variable called umsi_tweets.
-
+umsi_tweets = get_user_tweets("UMichFootball")
 
 
 
@@ -106,7 +113,8 @@ conn = sqlite3.connect('tweets.db')
 # in umsi_tweets into the correct columns in each row of the Tweets database table.
 
 # (You should do nested data investigation on the umsi_tweets value to figure out how to pull out the data correctly!)
-
+# for tweet in umsi_tweets:
+	
 
 
 
