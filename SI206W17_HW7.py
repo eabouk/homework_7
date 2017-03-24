@@ -23,7 +23,8 @@ import twitter_info # still need this in the same directory, filled out
 
 ## There are 3 parts to this assignment, each of which is described below.
 
-## There are tests for each part, but the tests are NOT exhaustive, because you may each have different tweets, etc. Make sure you check the data you get -- print it out, check the types, look in the database browser, try out your SQL queries!
+## There are tests for each part, but the tests are NOT exhaustive, because you may each have different tweets, etc. Make sure 
+# you check the data you get -- print it out, check the types, look in the database browser, try out your SQL queries!
 
 ## We have provided setup code for you to use Tweepy, like we did for HW5 and Project 2:
 
@@ -38,7 +39,8 @@ auth.set_access_token(access_token, access_token_secret)
 # Set up library to grab stuff from twitter with your authentication, and return it in a JSON format 
 api = tweepy.API(auth, parser=tweepy.parsers.JSONParser())
 
-# And we've provided the setup for your cache. But we haven't written any functions for you, so you have to be sure that any function that gets data from the internet relies on caching, just like in Project 2.
+# And we've provided the setup for your cache. But we haven't written any functions for you, so you have to be sure that any 
+# function that gets data from the internet relies on caching, just like in Project 2.
 CACHE_FNAME = "206W17_HW7_cache.json"
 try:
 	cache_file = open(CACHE_FNAME,'r')
@@ -50,21 +52,36 @@ except:
 
 ## [PART 1]
 
-# Here, define a function called get_user_tweets that accepts a specific Twitter user handle (e.g. "umsi" or "umich" or "Lin_Manuel" or "ColleenAtUMSI") and returns data that represents at least 20 tweets from that user's timeline.
+# Here, define a function called get_user_tweets that accepts a specific Twitter user handle (e.g. "umsi" or "umich" 
+# or "Lin_Manuel" or "ColleenAtUMSI") and returns data that represents at least 20 tweets from that user's timeline.
+def get_user_tweets(user):
+	twenty_tweets = api.user_timeline(user)
+
+	if twenty_tweets not in CACHE_DICTION.values():
+		CACHE_DICTION[user] = twenty_tweets
+		f = open(CACHE_FNAME, 'w')
+		f.write(json.dumps(CACHE_DICTION))
+		f.close()
+
+	return twenty_tweets
+	#this will update the cache diction every time you run it if the tweets have updated themselves 
+
+get_user_tweets("UMichFootball")
 
 # Your function must cache data it retrieves and rely on a cache file!
-# Note that this is a lot like work you have done already in class (but, depending upon what you did previously, may not be EXACTLY the same, so be careful your code does exactly what you want here).
-
-
-
-
+# Note that this is a lot like work you have done already in class (but, depending upon what you did previously, may not be 
+# EXACTLY the same, so be careful your code does exactly what you want here).
 
 # Write code to create/build a connection to a database: tweets.db,
+conn = sqlite3.connect('tweets.db')
+
 # And then load all of those tweets you got from Twitter into a database table called Tweets, with the following columns in each row:
 
 ## tweet_id - containing the unique id that belongs to each tweet
-## author - containing the screen name of the user who posted the tweet (note that even for RT'd tweets, it will be the person whose timeline it is)
-## time_posted - containing the date/time value that represents when the tweet was posted (note that this should be a TIMESTAMP column data type!)
+## author - containing the screen name of the user who posted the tweet (note that even for RT'd tweets, it will be 
+	#the person whose timeline it is)
+## time_posted - containing the date/time value that represents when the tweet was posted (note that this should be a 
+	#TIMESTAMP column data type!)
 ## tweet_text - containing the text that goes with that tweet
 ## retweets - containing the number that represents how many times the tweet has been retweeted
 
@@ -73,16 +90,20 @@ except:
 # Make a connection to a new database tweets.db, and create a variable to hold the database cursor.
 
 
-# Write code to drop the Tweets table if it exists, and create the table (so you can run the program over and over), with the correct (4) column names and appropriate types for each.
+# Write code to drop the Tweets table if it exists, and create the table (so you can run the program over and over), 
+#with the correct (4) column names and appropriate types for each.
+
 # HINT: Remember that the time_posted column should be the TIMESTAMP data type!
 
 
-# Invoke the function you defined above to get a list that represents a bunch of tweets from the UMSI timeline. Save those tweets in a variable called umsi_tweets.
+# Invoke the function you defined above to get a list that represents a bunch of tweets from the UMSI timeline. Save those 
+# tweets in a variable called umsi_tweets.
 
 
 
 
-# Use a for loop, the cursor you defined above to execute INSERT statements, that insert the data from each of the tweets in umsi_tweets into the correct columns in each row of the Tweets database table.
+# Use a for loop, the cursor you defined above to execute INSERT statements, that insert the data from each of the tweets 
+# in umsi_tweets into the correct columns in each row of the Tweets database table.
 
 # (You should do nested data investigation on the umsi_tweets value to figure out how to pull out the data correctly!)
 
@@ -99,18 +120,23 @@ except:
 
 ## [PART 2] - SQL statements
 
-## In this part of the homework, you will write a number of Python/SQL statements to get data from the database, as directed. For each direction, write Python code that includes an SQL statement that will get the data from your database. 
+## In this part of the homework, you will write a number of Python/SQL statements to get data from the database, as directed. 
+# For each direction, write Python code that includes an SQL statement that will get the data from your database. 
 ## You can verify whether your SQL statements work correctly in the SQLite browser! (And with the tests)
 
 
-# Select from the database all of the TIMES the tweets you collected were posted and fetch all the tuples that contain them in to the variable tweet_posted_times.
+# Select from the database all of the TIMES the tweets you collected were posted and fetch all the tuples that contain them in 
+#to the variable tweet_posted_times.
 
 
-# Select all of the tweets (the full rows/tuples of information) that have been retweeted MORE than 2 times, and fetch them into the variable more_than_2_rts.
+# Select all of the tweets (the full rows/tuples of information) that have been retweeted MORE than 2 times, and fetch them 
+#into the variable more_than_2_rts.
 
 
 
-# Select all of the TEXT values of the tweets that are retweets of another account (i.e. have "RT" at the beginning of the tweet text). Save the FIRST ONE from that group of text values in the variable first_rt. Note that first_rt should contain a single string value, not a tuple.
+# Select all of the TEXT values of the tweets that are retweets of another account (i.e. have "RT" at the beginning of the 
+#tweet text). Save the FIRST ONE from that group of text values in the variable first_rt. Note that first_rt should contain a 
+#single string value, not a tuple.
 
 
 
@@ -120,17 +146,25 @@ except:
 
 ## [PART 3] - Processing data
 
-# Define a function get_twitter_users that accepts a string as in put and returns a SET of the _twitter screennames_ of each twitter user who was mentioned in that string. 
+# Define a function get_twitter_users that accepts a string as in put and returns a SET of the _twitter screennames_ of each 
+# twitter user who was mentioned in that string. 
 
-# Note that the syntax for mentions in a tweet is that the username is preceded by an "@" character, e.g. "@umsi" or "@aadl", and cannot contain any punctuation besides underscores -- that's how to determine what user names are mentioned. (e.g. @hello? is just the username "hello", but @programmer_at_umsi is "programmer_at_umsi"). 
+# Note that the syntax for mentions in a tweet is that the username is preceded by an "@" character, e.g. "@umsi" or "@aadl", 
+# and cannot contain any punctuation besides underscores -- that's how to determine what user names are mentioned. (e.g. @hello? 
+#is just the username "hello", but @programmer_at_umsi is "programmer_at_umsi"). 
 
-#re.match and getting the 0th group from the MatchObject may be useful for you here... reminder: http://stackoverflow.com/questions/15340582/python-extract-pattern-matches
+#re.match and getting the 0th group from the MatchObject may be useful for you here... reminder: 
+# http://stackoverflow.com/questions/15340582/python-extract-pattern-matches
 
-# You may assume for this problem that there will be no usernames directly in order, e.g. "@hello@goodbye", only "@hello and @goodbye" for example. We will iterate on this later!
+# You may assume for this problem that there will be no usernames directly in order, e.g. "@hello@goodbye", only "@hello and 
+# @goodbye" for example. We will iterate on this later!
 
-# Also note that the SET type is what this function should return, NOT a list or tuple. We looked at very briefly at sets when we looked at set comprehensions last week. In a Python 3 set, which is a special data type, it's a lot like a combination of a list and a dictionary: no key-value pairs, BUT each element in a set is by definition unique. You can't have duplicates.
+# Also note that the SET type is what this function should return, NOT a list or tuple. We looked at very briefly at sets when 
+# we looked at set comprehensions last week. In a Python 3 set, which is a special data type, it's a lot like a combination of a 
+# list and a dictionary: no key-value pairs, BUT each element in a set is by definition unique. You can't have duplicates.
 
-# If you want to challenge yourself here -- this function definition (what goes under the def statement) CAN be written in one line! Definitely, definitely fine to write it with multiple lines, too, which will be much easier and clearer.
+# If you want to challenge yourself here -- this function definition (what goes under the def statement) CAN be written in one line!
+# Definitely, definitely fine to write it with multiple lines, too, which will be much easier and clearer.
 
 
 
