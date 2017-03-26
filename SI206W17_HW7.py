@@ -57,9 +57,9 @@ except:
 def get_user_tweets(user):
 	twenty_tweets = api.user_timeline(user)
 
-	for tweet in twenty_tweets:
-		print(tweet)
-		print ("ONE")
+	# for tweet in twenty_tweets:
+	# 	print(tweet)
+	# 	print ("ONE")
 	if twenty_tweets not in CACHE_DICTION.values():
 		CACHE_DICTION[user] = twenty_tweets
 		f = open(CACHE_FNAME, 'w')
@@ -99,13 +99,13 @@ cur = conn.cursor()
 #with the correct (4) column names and appropriate types for each.
 cur.execute('DROP TABLE IF EXISTS Tweets')
 
-new_table = 'CREATE TABLE IF NOT EXISTS Tweets (id INTEGER primary key, tweet_id INTEGER, authour TEXT, time_posted TIMESTAMP, tweet_text TEXT, retweets INTEGER)'
-
+Tweets = 'CREATE TABLE IF NOT EXISTS Tweets (id INTEGER primary key, tweet_id INTEGER, authour TEXT, time_posted TIMESTAMP, tweet_text TEXT, retweets INTEGER)'
+cur.execute(Tweets)
 # HINT: Remember that the time_posted column should be the TIMESTAMP data type!
 
 # Invoke the function you defined above to get a list that represents a bunch of tweets from the UMSI timeline. Save those 
 # tweets in a variable called umsi_tweets.
-umsi_tweets = get_user_tweets("UMichFootball")
+umsi_tweets = get_user_tweets("umsi")
 
 
 
@@ -113,13 +113,38 @@ umsi_tweets = get_user_tweets("UMichFootball")
 # in umsi_tweets into the correct columns in each row of the Tweets database table.
 
 # (You should do nested data investigation on the umsi_tweets value to figure out how to pull out the data correctly!)
-# for tweet in umsi_tweets:
-	
+statement = 'INSERT INTO Tweets VALUES (?, ?, ?, ?, ?, ?)'
+prim_key = []
+tweet_id = []
+author = []
+time_posted = []
+tweet_text = []
+retweets = []	
 
+none = None
+for tweet in umsi_tweets:
+	prim_key.append(none)
+	tweet_id.append(tweet["user"]["id"])
+	author.append(tweet["user"]["screen_name"])
+	time_posted.append(tweet["user"]["created_at"])
+	tweet_text.append(tweet["text"])
+	retweets.append(tweet["retweet_count"])
+
+all_keys = zip(prim_key, tweet_id, author, time_posted, tweet_text, retweets)
+print ("PRINTING ALL KEYS", all_keys)
+new_list = []
+
+for thing in all_keys:
+	print(thing)
+	new_list.append(thing)
+
+print ("PRINTING ALL KEYS", new_list)
+for t in new_list:
+	cur.execute(statement, t)
 
 
 # Use the database connection to commit the changes to the database
-
+conn.commit()
 
 
 # You can check out whether it worked in the SQLite browser! (And with the tests.)
