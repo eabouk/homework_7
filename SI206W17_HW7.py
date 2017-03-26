@@ -62,7 +62,7 @@ def get_user_tweets(user):
 		f = open(CACHE_FNAME, 'w')
 		f.write(json.dumps(CACHE_DICTION))
 		f.close()
-		
+
 	if twenty_tweets in CACHE_DICTION.values():
 		return CACHE_DICTION[user] 
 
@@ -192,7 +192,7 @@ first_rt = result[0][0]
 
 ## [PART 3] - Processing data
 
-# Define a function get_twitter_users that accepts a string as in put and returns a SET of the _twitter screennames_ of each 
+# Define a function get_twitter_users that accepts a string as input and returns a SET of the _twitter screennames_ of each 
 # twitter user who was mentioned in that string. 
 
 # Note that the syntax for mentions in a tweet is that the username is preceded by an "@" character, e.g. "@umsi" or "@aadl", 
@@ -211,6 +211,8 @@ first_rt = result[0][0]
 
 # If you want to challenge yourself here -- this function definition (what goes under the def statement) CAN be written in one line!
 # Definitely, definitely fine to write it with multiple lines, too, which will be much easier and clearer.
+def get_twitter_users(string):
+	return set(re.findall(r'@([A-Za-z0-9_]*)', string))
 
 
 
@@ -252,15 +254,15 @@ class PartTwo(unittest.TestCase):
 	def test7(self):
 		self.assertTrue(set([x[-1] > 2 for x in more_than_2_rts]) in [{},{True}])
 
-# class PartThree(unittest.TestCase):
-# 	def test1(self):
-# 		self.assertEqual(get_twitter_users("RT @umsi and @student3 are super fun"),{'umsi', 'student3'})
-# 	def test2(self):
-# 		self.assertEqual(get_twitter_users("the SI 206 people are all pretty cool"),set())
-# 	def test3(self):
-# 		self.assertEqual(get_twitter_users("@twitter_user_4, what did you think of the comment by @twitteruser5?"),{'twitter_user_4', 'twitteruser5'})
-# 	def test4(self):
-# 		self.assertEqual(get_twitter_users("hey @umich, @aadl is pretty great, huh? @student1 @student2"),{'aadl', 'student2', 'student1', 'umich'})
+class PartThree(unittest.TestCase):
+	def test1(self):
+		self.assertEqual(get_twitter_users("RT @umsi and @student3 are super fun"),{'umsi', 'student3'})
+	def test2(self):
+		self.assertEqual(get_twitter_users("the SI 206 people are all pretty cool"),set())
+	def test3(self):
+		self.assertEqual(get_twitter_users("@twitter_user_4, what did you think of the comment by @twitteruser5?"),{'twitter_user_4', 'twitteruser5'})
+	def test4(self):
+		self.assertEqual(get_twitter_users("hey @umich, @aadl is pretty great, huh? @student1 @student2"),{'aadl', 'student2', 'student1', 'umich'})
 
 
 if __name__ == "__main__":
